@@ -1,0 +1,182 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Intro to graphics | Sample | ArcGIS Maps SDK for JavaScript 4.30</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.30/"></script>
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <script>
+      require(["esri/Map", "esri/views/MapView", "esri/Graphic"], (Map, MapView, Graphic) => {
+        const map = new Map({
+          basemap: "hybrid"
+        });
+
+        const view = new MapView({
+          center: [127, 36],
+          container: "viewDiv",
+          map: map,
+          zoom: 8
+        });
+
+        /*************************
+         * Create a point graphic
+         *************************/
+
+        // First create a point geometry (this is the location of the Titanic)
+        const point = {
+          type: "point", // autocasts as new Point()
+          longitude: 127.30050271957498,
+          latitude: 36.351477422659954
+        };
+
+        // Create a symbol for drawing the point
+        const markerSymbol = {
+          type: "picture-marker", // autocasts as new SimpleMarkerSymbol()
+          url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvRF19IEeu5LnaMQjwa_naqUUd8vQoSDypNA&s",
+          height: "65px",
+          width: "65px"
+          };
+
+        // Create a graphic and add the geometry and symbol to it
+        const pointGraphic = new Graphic({
+          geometry: point,
+          symbol: markerSymbol
+        });
+
+        /****************************
+         * Create a polyline graphic
+         ****************************/
+
+        // First create a line geometry (this is the Keystone pipeline)
+        const polyline = {
+          type: "polyline", // autocasts as new Polyline()
+          paths: [
+          [
+            127.301854552917,
+            36.353231518248776
+          ],
+          [
+            127.30366772621232,
+            36.351874905911856
+          ]
+        ]
+        };
+
+        // Create a symbol for drawing the line
+        const lineSymbol = {
+          type: "simple-line", // autocasts as SimpleLineSymbol()
+          color: [35, 119, 136],
+          width: 4
+        };
+
+        // Create an object for storing attributes related to the line
+        const lineAtt = {
+          Name: "Keystone Pipeline",
+          Owner: "TransCanada",
+          Length: "3,456 km"
+        };
+
+        /*******************************************
+         * Create a new graphic and add the geometry,
+         * symbol, and attributes to it. You may also
+         * add a simple PopupTemplate to the graphic.
+         * This allows users to view the graphic's
+         * attributes when it is clicked.
+         ******************************************/
+        const polylineGraphic = new Graphic({
+          geometry: polyline,
+          symbol: lineSymbol,
+          attributes: lineAtt,
+          popupTemplate: {
+            // autocasts as new PopupTemplate()
+            title: "{Name}",
+            content: [
+              {
+                type: "fields",
+                fieldInfos: [
+                  {
+                    fieldName: "Name"
+                  },
+                  {
+                    fieldName: "Owner"
+                  },
+                  {
+                    fieldName: "Length"
+                  }
+                ]
+              }
+            ]
+          }
+        });
+
+        /***************************
+         * Create a polygon graphic
+         ***************************/
+
+        // Create a polygon geometry
+        const polygon = {
+          type: "polygon", // autocasts as new Polygon()
+          rings: [
+            [
+              127.29786342590432,
+              36.352220541872484
+            ],
+            [
+              127.29786342590432,
+              36.35003436857917
+            ],
+            [
+              127.30022376983646,
+              36.35003436857917
+            ],
+            [
+              127.30022376983646,
+              36.352220541872484
+            ],
+            [
+              127.29786342590432,
+              36.352220541872484
+            ]
+          ]
+        };
+
+        // Create a symbol for rendering the graphic
+        const fillSymbol = {
+          type: "simple-fill", // autocasts as new SimpleFillSymbol()
+          color: [227, 139, 79, 0.8],
+          outline: {
+            // autocasts as new SimpleLineSymbol()
+            color: [255, 255, 255],
+            width: 1
+          }
+        };
+
+        // Add the geometry and symbol to a new graphic
+        const polygonGraphic = new Graphic({
+          geometry: polygon,
+          symbol: fillSymbol
+        });
+
+        // Add the graphics to the view's graphics layer
+        view.graphics.addMany([pointGraphic, polylineGraphic, polygonGraphic]);
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>
